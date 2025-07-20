@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Edit, Calendar, MapPin, Phone, Mail, Camera, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,20 +8,25 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [userProfile, setUserProfile] = useState({
-    name: 'John Doe',
-    email: 'john.doe@email.com',
-    phone: '+1 (555) 123-4567',
-    location: 'New York, NY',
-    bio: 'Passionate sports enthusiast who loves playing football and tennis. Always looking for new challenges and ways to improve my game.',
-    role: 'Player',
-    joinDate: '2023-01-15',
-    sports: ['Football', 'Tennis', 'Basketball'],
-    avatar: '👤'
-  });
+  const { user, updateUser, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!user) {
+    return null;
+  }
 
   const [bookingHistory] = useState([
     {
@@ -55,14 +60,15 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    // Here you would typically save to backend
+    updateUser(user);
+    toast({
+      title: "Profile updated",
+      description: "Your profile has been successfully updated.",
+    });
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setUserProfile(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    updateUser({ [field]: value });
   };
 
   return (
@@ -73,31 +79,31 @@ const Profile = () => {
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative">
               <Avatar className="h-32 w-32 border-4 border-primary-foreground">
-                <AvatarImage src="/placeholder-user.jpg" alt={userProfile.name} />
-                <AvatarFallback className="text-4xl">{userProfile.avatar}</AvatarFallback>
+                <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+                <AvatarFallback className="text-4xl">{user.avatar}</AvatarFallback>
               </Avatar>
               <Button size="icon" className="absolute bottom-0 right-0 rounded-full bg-primary">
                 <Camera className="h-4 w-4" />
               </Button>
             </div>
             <div className="text-center md:text-left text-primary-foreground">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{userProfile.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold mb-2">{user.name}</h1>
               <div className="flex flex-col md:flex-row gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <span>{userProfile.email}</span>
+                  <span>{user.email}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4" />
-                  <span>{userProfile.location}</span>
+                  <span>{user.location}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4" />
-                  <span>Member since {new Date(userProfile.joinDate).getFullYear()}</span>
+                  <span>Member since {new Date(user.joinDate).getFullYear()}</span>
                 </div>
               </div>
               <Badge className="bg-primary-foreground text-primary">
-                {userProfile.role}
+                {user.role}
               </Badge>
             </div>
           </div>
@@ -138,7 +144,7 @@ const Profile = () => {
                     <Label htmlFor="name">Full Name</Label>
                     <Input
                       id="name"
-                      value={userProfile.name}
+                      value={user.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1"
@@ -149,7 +155,7 @@ const Profile = () => {
                     <Input
                       id="email"
                       type="email"
-                      value={userProfile.email}
+                      value={user.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1"
@@ -162,7 +168,7 @@ const Profile = () => {
                     <Label htmlFor="phone">Phone Number</Label>
                     <Input
                       id="phone"
-                      value={userProfile.phone}
+                      value={user.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1"
@@ -172,7 +178,7 @@ const Profile = () => {
                     <Label htmlFor="location">Location</Label>
                     <Input
                       id="location"
-                      value={userProfile.location}
+                      value={user.location}
                       onChange={(e) => handleInputChange('location', e.target.value)}
                       disabled={!isEditing}
                       className="mt-1"
@@ -183,7 +189,7 @@ const Profile = () => {
                 <div>
                   <Label htmlFor="role">Role</Label>
                   <Select
-                    value={userProfile.role}
+                    value={user.role}
                     onValueChange={(value) => handleInputChange('role', value)}
                     disabled={!isEditing}
                   >
@@ -203,7 +209,7 @@ const Profile = () => {
                   <Label htmlFor="bio">Bio</Label>
                   <Textarea
                     id="bio"
-                    value={userProfile.bio}
+                    value={user.bio}
                     onChange={(e) => handleInputChange('bio', e.target.value)}
                     disabled={!isEditing}
                     className="mt-1"
@@ -214,7 +220,7 @@ const Profile = () => {
                 <div>
                   <Label>Favorite Sports</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
-                    {userProfile.sports.map((sport) => (
+                    {user.sports.map((sport) => (
                       <Badge key={sport} variant="secondary" className="bg-primary/10 text-primary">
                         {sport}
                       </Badge>
