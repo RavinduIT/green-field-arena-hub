@@ -105,8 +105,8 @@ const Shop = () => {
   ];
 
   const filteredProducts = products.filter(product => {
-    if (selectedCategory && product.category !== selectedCategory) return false;
-    if (selectedBrand && product.brand !== selectedBrand) return false;
+    if (selectedCategory && selectedCategory !== 'all-categories' && product.category !== selectedCategory) return false;
+    if (selectedBrand && selectedBrand !== 'all-brands' && product.brand !== selectedBrand) return false;
     return true;
   });
 
@@ -153,7 +153,7 @@ const Shop = () => {
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all-categories">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
@@ -168,7 +168,7 @@ const Shop = () => {
                     <SelectValue placeholder="All brands" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Brands</SelectItem>
+                    <SelectItem value="all-brands">All Brands</SelectItem>
                     {brands.map((brand) => (
                       <SelectItem key={brand} value={brand}>
                         {brand}
@@ -183,7 +183,7 @@ const Shop = () => {
                     <SelectValue placeholder="Price range" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Price</SelectItem>
+                    <SelectItem value="any-price">Any Price</SelectItem>
                     {priceRanges.map((range) => (
                       <SelectItem key={range} value={range}>
                         {range}

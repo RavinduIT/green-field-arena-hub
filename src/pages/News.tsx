@@ -100,7 +100,7 @@ const News = () => {
   ];
 
   const filteredNews = newsArticles.filter(article => {
-    if (selectedCategory && article.category !== selectedCategory) return false;
+    if (selectedCategory && selectedCategory !== 'all-categories' && article.category !== selectedCategory) return false;
     if (searchQuery && !article.title.toLowerCase().includes(searchQuery.toLowerCase()) && 
         !article.excerpt.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
@@ -142,7 +142,7 @@ const News = () => {
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all-categories">All Categories</SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}

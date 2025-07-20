@@ -85,8 +85,8 @@ const BookCoach = () => {
   ];
 
   const filteredCoaches = coaches.filter(coach => {
-    if (selectedSport && coach.sport !== selectedSport) return false;
-    if (selectedLocation && coach.location !== selectedLocation) return false;
+    if (selectedSport && selectedSport !== 'all-sports' && coach.sport !== selectedSport) return false;
+    if (selectedLocation && selectedLocation !== 'all-locations' && coach.location !== selectedLocation) return false;
     return true;
   });
 
@@ -122,7 +122,7 @@ const BookCoach = () => {
                     <SelectValue placeholder="All sports" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sports</SelectItem>
+                    <SelectItem value="all-sports">All Sports</SelectItem>
                     {sports.map((sport) => (
                       <SelectItem key={sport} value={sport}>
                         {sport}
@@ -140,7 +140,7 @@ const BookCoach = () => {
                     <SelectValue placeholder="All locations" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Locations</SelectItem>
+                    <SelectItem value="all-locations">All Locations</SelectItem>
                     {locations.map((location) => (
                       <SelectItem key={location} value={location}>
                         {location}
@@ -158,7 +158,7 @@ const BookCoach = () => {
                     <SelectValue placeholder="Any price" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Any Price</SelectItem>
+                    <SelectItem value="any-price">Any Price</SelectItem>
                     {priceRanges.map((range) => (
                       <SelectItem key={range} value={range}>
                         {range}

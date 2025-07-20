@@ -66,7 +66,7 @@ const BookGround = () => {
   ];
 
   const filteredGrounds = grounds.filter(ground => {
-    if (selectedSport && !ground.sports.includes(selectedSport)) return false;
+    if (selectedSport && selectedSport !== 'all-sports' && !ground.sports.includes(selectedSport)) return false;
     return true;
   });
 
@@ -126,7 +126,7 @@ const BookGround = () => {
                     <SelectValue placeholder="All sports" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Sports</SelectItem>
+                    <SelectItem value="all-sports">All Sports</SelectItem>
                     {sports.map((sport) => (
                       <SelectItem key={sport} value={sport}>
                         {sport}
