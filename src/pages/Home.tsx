@@ -70,12 +70,16 @@ const Home = () => {
             Book grounds, hire coaches, buy equipment, and stay updated with the latest sports news
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-strong">
-              <Calendar className="mr-2 h-5 w-5" />
-              Book Now
+            <Button asChild size="lg" className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-strong">
+              <Link to="/book-ground">
+                <Calendar className="mr-2 h-5 w-5" />
+                Book Now
+              </Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-              Explore Sports
+            <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
+              <Link to="/shop">
+                Explore Sports
+              </Link>
             </Button>
           </div>
         </div>
