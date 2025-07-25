@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, User, ShoppingCart, MapPin, Star, Clock } from 'lucide-react';
 import NewsCarousel from '@/components/NewsCarousel';
 import heroImage from '@/assets/hero-sports.jpg';
+import sportsComplexImage from '@/assets/sports-complex.jpg';
+import tennisCourtImage from '@/assets/tennis-court.jpg';
+import basketballCourtImage from '@/assets/basketball-court.jpg';
 
 const Home = () => {
   const features = [
@@ -36,21 +39,21 @@ const Home = () => {
       type: 'Multi-Sport',
       rating: 4.9,
       price: '$25/hour',
-      image: '🏟️'
+      image: sportsComplexImage
     },
     {
       name: 'Tennis Center Pro',
       type: 'Tennis Courts',
       rating: 4.8,
       price: '$30/hour',
-      image: '🎾'
+      image: tennisCourtImage
     },
     {
       name: 'Basketball Arena',
       type: 'Basketball',
       rating: 4.7,
       price: '$20/hour',
-      image: '🏀'
+      image: basketballCourtImage
     }
   ];
 
@@ -153,13 +156,20 @@ const Home = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {popularVenues.map((venue, index) => (
-              <Card key={index} className="group hover:shadow-medium transition-all duration-300 hover:-translate-y-1">
-                <CardContent className="p-6">
-                  <div className="text-center mb-4">
-                    <div className="text-4xl mb-2">{venue.image}</div>
-                    <h3 className="text-xl font-bold text-card-foreground">{venue.name}</h3>
-                    <p className="text-muted-foreground">{venue.type}</p>
+              <Card key={index} className="group hover:shadow-medium transition-all duration-300 hover:-translate-y-1 overflow-hidden">
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={venue.image} 
+                    alt={venue.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <h3 className="text-xl font-bold">{venue.name}</h3>
+                    <p className="text-white/90">{venue.type}</p>
                   </div>
+                </div>
+                <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-1">
                       <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
