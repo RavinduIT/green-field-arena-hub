@@ -13,11 +13,12 @@ import basketballCourtImage from '@/assets/basketball-court.jpg';
 
 const BookGround = () => {
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedSport, setSelectedSport] = useState('');
 
   const sports = ['Football', 'Basketball', 'Tennis', 'Volleyball', 'Badminton'];
+  const locations = ['Downtown Area', 'Sports District', 'North Side', 'Valley Area', 'East Zone', 'West Side'];
   const timeSlots = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
 
   const grounds = [
@@ -73,6 +74,7 @@ const BookGround = () => {
 
   const filteredGrounds = grounds.filter(ground => {
     if (selectedSport && selectedSport !== 'all-sports' && !ground.sports.includes(selectedSport)) return false;
+    if (selectedLocation && selectedLocation !== 'all-locations' && ground.location !== selectedLocation) return false;
     return true;
   });
 
@@ -101,14 +103,21 @@ const BookGround = () => {
             <div className="grid md:grid-cols-4 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Select Date
+                  Select Location
                 </label>
-                <Input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full"
-                />
+                <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All locations" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all-locations">All Locations</SelectItem>
+                    {locations.map((location) => (
+                      <SelectItem key={location} value={location}>
+                        {location}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
