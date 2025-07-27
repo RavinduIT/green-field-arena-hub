@@ -101,18 +101,23 @@ const BookGround = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10">
         <Card className="shadow-strong bg-card/95 backdrop-blur-sm">
           <CardContent className="p-6">
-            <div className="grid md:grid-cols-4 gap-4 mb-4">
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
                   Search Grounds
                 </label>
-                <Input
-                  type="text"
-                  placeholder="Search by ground name..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Search by ground name..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1"
+                  />
+                  <Button className="bg-gradient-primary">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
@@ -149,20 +154,6 @@ const BookGround = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="flex items-end">
-                <Button 
-                  className="w-full bg-gradient-primary"
-                  onClick={() => {
-                    // Clear all filters to show all results
-                    setSearchQuery('');
-                    setSelectedLocation('');
-                    setSelectedSport('');
-                  }}
-                >
-                  <Search className="mr-2 h-4 w-4" />
-                  Clear Filters
-                </Button>
               </div>
             </div>
           </CardContent>
