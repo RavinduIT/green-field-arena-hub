@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Star, Filter, Search, Heart, Eye } from 'lucide-react';
+import { Heart, Eye, Search, ShoppingCart, Star, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -312,19 +312,17 @@ const Shop = () => {
                   </Button>
                   <Button
                     variant="outline"
-                    size="icon"
-                    className="flex-shrink-0"
+                    className="flex-1"
+                    onClick={() => navigate(`/product-details?id=${product.id}`)}
                   >
-                    <Eye className="h-4 w-4" />
+                    View Details
                   </Button>
                   <Button
                     className="flex-1 bg-gradient-primary"
-                    disabled={!product.inStock || isInCart(product.id)}
-                    onClick={() => addToCart(product.id)}
+                    onClick={() => navigate(`/product-details?id=${product.id}`)}
                   >
                     <ShoppingCart className="mr-2 h-4 w-4" />
-                    {!product.inStock ? 'Out of Stock' : 
-                     isInCart(product.id) ? 'Added to Cart' : 'Add to Cart'}
+                    Buy Now
                   </Button>
                 </div>
               </CardContent>

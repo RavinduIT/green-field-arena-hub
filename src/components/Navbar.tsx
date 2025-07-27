@@ -24,7 +24,6 @@ const Navbar = () => {
     { name: 'Book Ground', href: '/book-ground', icon: Calendar },
     { name: 'Book Coach', href: '/book-coach', icon: User },
     { name: 'Sports Shop', href: '/shop', icon: ShoppingCart },
-    { name: 'News', href: '/news', icon: Trophy },
   ];
 
   return (

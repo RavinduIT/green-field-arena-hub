@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import BookGround from "./pages/BookGround";
 import BookCoach from "./pages/BookCoach";
 import Shop from "./pages/Shop";
-import News from "./pages/News";
+import ProductDetails from "./pages/ProductDetails";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
@@ -44,7 +44,7 @@ const App = () => (
               <Route path="/book-ground" element={<BookGround />} />
               <Route path="/book-coach" element={<BookCoach />} />
               <Route path="/shop" element={<Shop />} />
-              <Route path="/news" element={<News />} />
+              <Route path="/product-details" element={<ProductDetails />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/shop" element={<AdminShop />} />
