@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Clock, MapPin, Star, Filter, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import tennisCourtImage from '@/assets/tennis-court.jpg';
 import basketballCourtImage from '@/assets/basketball-court.jpg';
 
 const BookGround = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [selectedSport, setSelectedSport] = useState('');
@@ -239,11 +241,18 @@ const BookGround = () => {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => navigate(`/ground-details?id=${ground.id}`)}
+                  >
                     <Calendar className="mr-2 h-4 w-4" />
                     View Details
                   </Button>
-                  <Button className="flex-1 bg-gradient-primary">
+                  <Button 
+                    className="flex-1 bg-gradient-primary"
+                    onClick={() => navigate(`/ground-details?id=${ground.id}`)}
+                  >
                     Book Now
                   </Button>
                 </div>

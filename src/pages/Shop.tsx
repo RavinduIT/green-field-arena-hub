@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Star, Filter, Search, Heart, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import tennisEquipment from '@/assets/tennis-equipment.jpg';
 import footballEquipment from '@/assets/football-equipment.jpg';
 
 const Shop = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [priceRange, setPriceRange] = useState('');
@@ -341,7 +343,11 @@ const Shop = () => {
                 <ShoppingCart className="h-5 w-5 text-primary" />
                 <span className="font-medium">{cartItems.length} items in cart</span>
               </div>
-              <Button size="sm" className="w-full bg-gradient-primary">
+              <Button 
+                size="sm" 
+                className="w-full bg-gradient-primary"
+                onClick={() => navigate('/cart')}
+              >
                 View Cart
               </Button>
             </CardContent>

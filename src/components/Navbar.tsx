@@ -57,8 +57,21 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Auth Buttons */}
+          {/* Cart and Auth Buttons */}
           <div className="hidden md:flex items-center space-x-4">
+            <Link to="/cart">
+              <Button variant="outline" size="sm" className="relative">
+                <ShoppingCart className="h-4 w-4" />
+                <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                  3
+                </span>
+              </Button>
+            </Link>
+            <Link to="/service-provider-register">
+              <Button variant="outline" size="sm">
+                Join as Provider
+              </Button>
+            </Link>
             {isAuthenticated ? (
               <>
                 <DropdownMenu>

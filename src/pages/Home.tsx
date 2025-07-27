@@ -210,9 +210,11 @@ const Home = () => {
                       Available Now
                     </Badge>
                   </div>
-                  <Button className="w-full bg-gradient-primary hover:shadow-medium transition-all duration-300 text-lg py-6 group">
-                    <MapPin className="mr-2 h-5 w-5 group-hover:animate-pulse" />
-                    Book Now
+                  <Button asChild className="w-full bg-gradient-primary hover:shadow-medium transition-all duration-300 text-lg py-6 group">
+                    <Link to="/book-ground">
+                      <MapPin className="mr-2 h-5 w-5 group-hover:animate-pulse" />
+                      Book Now
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
