@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star, MapPin, Clock, Award, Filter, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,7 @@ import coachTrainingImage from '@/assets/coach-training.jpg';
 import coachCertification from '@/assets/coach-certification.jpg';
 
 const BookCoach = () => {
+  const navigate = useNavigate();
   const [selectedSport, setSelectedSport] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [priceRange, setPriceRange] = useState('');
@@ -274,11 +276,18 @@ const BookCoach = () => {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button variant="outline" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    className="flex-1"
+                    onClick={() => navigate(`/coach-profile?id=${coach.id}`)}
+                  >
                     <User className="mr-2 h-4 w-4" />
                     View Profile
                   </Button>
-                  <Button className="flex-1 bg-gradient-primary">
+                  <Button 
+                    className="flex-1 bg-gradient-primary"
+                    onClick={() => navigate(`/payment?type=coach&id=${coach.id}&price=${coach.price}`)}
+                  >
                     <Clock className="mr-2 h-4 w-4" />
                     Book Session
                   </Button>

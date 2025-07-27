@@ -5,9 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Clock, MapPin, Star, Users, Wifi, Car, Coffee } from 'lucide-react';
+import { CalendarIcon, Clock, MapPin, Star, Users, Wifi, Car, Coffee, MessageSquare } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import GoogleMap from '@/components/GoogleMap';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import sportsComplexImage from '@/assets/sports-complex.jpg';
 
 const GroundDetails = () => {
@@ -25,13 +28,50 @@ const GroundDetails = () => {
     type: 'Multi-Sport Facility',
     sports: ['Football', 'Basketball', 'Tennis'],
     location: 'Downtown Area',
+    address: '123 Sports Avenue, Downtown Area, City',
+    coordinates: { lat: 40.7128, lng: -74.0060 },
     rating: 4.9,
+    totalReviews: 156,
     price: 25,
     image: sportsComplexImage,
     amenities: ['Parking', 'Changing Rooms', 'Equipment Rental', 'Cafeteria', 'WiFi', 'AC'],
     description: 'Premium sports complex with state-of-the-art facilities and professional-grade equipment.',
     capacity: 50,
-    images: [sportsComplexImage, sportsComplexImage, sportsComplexImage]
+    images: [sportsComplexImage, sportsComplexImage, sportsComplexImage],
+    reviews: [
+      {
+        id: 1,
+        name: 'Alex Johnson',
+        rating: 5,
+        comment: 'Excellent facilities with top-notch equipment. The staff is very helpful and the booking process is seamless.',
+        date: '2024-01-15',
+        verified: true
+      },
+      {
+        id: 2,
+        name: 'Maria Santos',
+        rating: 5,
+        comment: 'Great location and amazing courts. Perfect for our weekly tennis sessions. Highly recommended!',
+        date: '2024-01-12',
+        verified: true
+      },
+      {
+        id: 3,
+        name: 'David Chen',
+        rating: 4,
+        comment: 'Good facilities overall. The only minor issue is parking can get crowded during peak hours.',
+        date: '2024-01-08',
+        verified: false
+      },
+      {
+        id: 4,
+        name: 'Sarah Wilson',
+        rating: 5,
+        comment: 'Perfect venue for our basketball team practice. Clean, well-maintained, and reasonably priced.',
+        date: '2024-01-05',
+        verified: true
+      }
+    ]
   };
 
   const timeSlots = ['08:00', '09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
@@ -86,6 +126,7 @@ const GroundDetails = () => {
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-foreground px-3 py-2 rounded-full flex items-center gap-1">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                 <span className="font-semibold">{ground.rating}</span>
+                <span className="text-sm text-muted-foreground">({ground.totalReviews})</span>
               </div>
             </div>
 
@@ -94,7 +135,7 @@ const GroundDetails = () => {
             
             <div className="flex items-center gap-2 mb-6">
               <MapPin className="h-5 w-5 text-muted-foreground" />
-              <span className="text-muted-foreground">{ground.location}</span>
+              <span className="text-muted-foreground">{ground.address}</span>
             </div>
 
             <p className="text-foreground mb-6">{ground.description}</p>
@@ -122,6 +163,70 @@ const GroundDetails = () => {
                     </div>
                   );
                 })}
+              </div>
+            </div>
+
+            {/* Location Map */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-foreground mb-3">Location & Map:</h3>
+              <GoogleMap 
+                address={ground.address}
+                lat={ground.coordinates.lat}
+                lng={ground.coordinates.lng}
+                height="300px"
+                className="rounded-lg"
+              />
+            </div>
+
+            {/* Reviews Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-foreground">Reviews & Ratings</h3>
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold">{ground.rating}</span>
+                  <span className="text-muted-foreground">({ground.totalReviews} reviews)</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {ground.reviews.slice(0, 3).map((review) => (
+                  <div key={review.id} className="border border-border/20 rounded-lg p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback>{review.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-foreground">{review.name}</p>
+                            {review.verified && (
+                              <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                                Verified
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 mt-1">
+                            {Array.from({ length: review.rating }).map((_, i) => (
+                              <Star key={i} className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(review.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p className="text-muted-foreground text-sm italic">"{review.comment}"</p>
+                  </div>
+                ))}
+                
+                {ground.reviews.length > 3 && (
+                  <Button variant="outline" className="w-full">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    View All {ground.totalReviews} Reviews
+                  </Button>
+                )}
               </div>
             </div>
           </div>

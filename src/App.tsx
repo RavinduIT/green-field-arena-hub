@@ -23,6 +23,7 @@ import GroundDetails from "./pages/GroundDetails";
 import ServiceProviderRegister from "./pages/ServiceProviderRegister";
 import Cart from "./pages/Cart";
 import NewsDetails from "./pages/NewsDetails";
+import CoachProfile from "./pages/CoachProfile";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="/service-provider-register" element={<ServiceProviderRegister />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/news-details" element={<NewsDetails />} />
+              <Route path="/coach-profile" element={<CoachProfile />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
