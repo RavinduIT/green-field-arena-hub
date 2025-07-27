@@ -1,17 +1,31 @@
+import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft, Star, Award, Calendar, MapPin, Clock, Globe, Trophy, Users } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ArrowLeft, Star, Award, Calendar as CalendarIcon, MapPin, Clock, Globe, Trophy, Users, Send, MessageSquare } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 import coachTrainingImage from '@/assets/coach-training.jpg';
 import coachCertification from '@/assets/coach-certification.jpg';
 
 const CoachProfile = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const coachId = searchParams.get('id') || '1';
+
+  // Booking form state
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState('');
+  const [venue, setVenue] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Mock coach data - in a real app this would come from an API
   const coachData = {
@@ -26,9 +40,11 @@ const CoachProfile = () => {
       location: 'Downtown',
       avatar: coachTrainingImage,
       coverImage: coachCertification,
+      gallery: [coachTrainingImage, coachCertification, coachTrainingImage, coachCertification],
       specializations: ['Youth Training', 'Professional Coaching', 'Tactical Analysis'],
       certifications: ['UEFA B License', 'Sports Science Diploma', 'First Aid Certified'],
       availability: ['Mon', 'Wed', 'Fri', 'Sat'],
+      availableTimes: ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
       languages: ['English', 'Spanish'],
       bio: 'Former professional player with 8 years coaching experience. Specialized in youth development and tactical training.',
       fullDescription: `John Martinez is a dedicated football coach with over 8 years of professional coaching experience. He has worked with players of all levels, from youth teams to semi-professional clubs. His coaching philosophy focuses on developing technical skills, tactical awareness, and mental strength.
@@ -94,8 +110,31 @@ His expertise includes:
 
   const coach = coachData[coachId] || coachData[1];
 
-  const handleBookSession = () => {
-    navigate(`/payment?type=coach&id=${coachId}&price=${coach.price}`);
+  const handleBookingRequest = async () => {
+    if (!selectedDate || !selectedTime || !venue.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields: date, time, and venue.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    setTimeout(() => {
+      toast({
+        title: "Request Sent!",
+        description: `Your coaching request has been sent to ${coach.name}. You'll receive a notification when they respond.`,
+      });
+      
+      // Reset form
+      setSelectedDate(undefined);
+      setSelectedTime('');
+      setVenue('');
+      setIsSubmitting(false);
+    }, 1500);
   };
 
   return (
@@ -153,6 +192,30 @@ His expertise includes:
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
+            {/* Coach Gallery */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Coach Gallery
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  {coach.gallery.map((image, index) => (
+                    <div key={index} className="relative h-32 rounded-lg overflow-hidden group">
+                      <img 
+                        src={image} 
+                        alt={`${coach.name} - Image ${index + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* About Section */}
             <Card>
               <CardHeader>
@@ -299,16 +362,83 @@ His expertise includes:
             </Card>
           </div>
 
-          {/* Sidebar - Booking */}
+          {/* Sidebar - Booking Request Form */}
           <div>
             <Card className="sticky top-8">
               <CardHeader>
-                <CardTitle>Book a Session</CardTitle>
+                <CardTitle>Send Booking Request</CardTitle>
                 <div className="text-3xl font-bold text-primary">
                   ${coach.price}<span className="text-sm text-muted-foreground">/hour</span>
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  Send a request to the coach. Payment is only required after they accept.
+                </p>
               </CardHeader>
               <CardContent className="space-y-6">
+                {/* Date Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Select Date *
+                  </label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !selectedDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        disabled={(date) => date < new Date()}
+                        initialFocus
+                        className="pointer-events-auto"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Time Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Select Time *
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {coach.availableTimes.map((time) => (
+                      <Button
+                        key={time}
+                        variant={selectedTime === time ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedTime(time)}
+                        className="text-xs"
+                      >
+                        {time}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Venue */}
+                <div>
+                  <label className="block text-sm font-medium text-card-foreground mb-2">
+                    Venue Details *
+                  </label>
+                  <Textarea
+                    placeholder="Please specify the venue address or location where you'd like the coaching session to take place..."
+                    value={venue}
+                    onChange={(e) => setVenue(e.target.value)}
+                    className="min-h-[80px]"
+                  />
+                </div>
+
                 <div>
                   <h4 className="font-semibold mb-3">Available Days</h4>
                   <div className="grid grid-cols-2 gap-2">
@@ -339,14 +469,21 @@ His expertise includes:
 
                 <Button 
                   className="w-full bg-gradient-primary text-lg py-6"
-                  onClick={handleBookSession}
+                  onClick={handleBookingRequest}
+                  disabled={isSubmitting || !selectedDate || !selectedTime || !venue.trim()}
                 >
-                  <Clock className="mr-2 h-5 w-5" />
-                  Book Session
+                  {isSubmitting ? (
+                    <>Processing...</>
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-5 w-5" />
+                      Send Request
+                    </>
+                  )}
                 </Button>
 
                 <p className="text-xs text-muted-foreground text-center">
-                  You won't be charged until the session is confirmed
+                  The coach will review your request and respond within 2 hours
                 </p>
               </CardContent>
             </Card>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, User, ShoppingCart, Calendar, Trophy, LogOut } from 'lucide-react';
+import { Menu, X, User, ShoppingCart, Calendar, Trophy, LogOut, BookOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -117,6 +117,12 @@ const Navbar = () => {
                         Profile
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/my-bookings" className="flex items-center">
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        My Bookings
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={logout} className="text-red-600">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -179,6 +185,12 @@ const Navbar = () => {
                       <Button variant="outline" size="sm" className="w-full justify-start">
                         <User className="mr-2 h-4 w-4" />
                         Profile
+                      </Button>
+                    </Link>
+                    <Link to="/my-bookings" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" size="sm" className="w-full justify-start">
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        My Bookings
                       </Button>
                     </Link>
                     <Button variant="outline" size="sm" onClick={logout} className="w-full justify-start text-red-600">
