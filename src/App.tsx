@@ -22,6 +22,7 @@ import Payment from "./pages/Payment";
 import GroundDetails from "./pages/GroundDetails";
 import ServiceProviderRegister from "./pages/ServiceProviderRegister";
 import Cart from "./pages/Cart";
+import NewsDetails from "./pages/NewsDetails";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/ground-details" element={<GroundDetails />} />
               <Route path="/service-provider-register" element={<ServiceProviderRegister />} />
               <Route path="/cart" element={<Cart />} />
+              <Route path="/news-details" element={<NewsDetails />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
