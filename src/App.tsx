@@ -10,6 +10,9 @@ import BookGround from "./pages/BookGround";
 import BookCoach from "./pages/BookCoach";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
+import News from "./pages/News";
+import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
@@ -45,6 +48,9 @@ const App = () => (
               <Route path="/book-coach" element={<BookCoach />} />
               <Route path="/shop" element={<Shop />} />
               <Route path="/product-details" element={<ProductDetails />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/shop" element={<AdminShop />} />

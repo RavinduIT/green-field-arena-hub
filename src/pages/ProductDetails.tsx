@@ -21,22 +21,13 @@ const ProductDetails = () => {
   const productId = searchParams.get('id');
   const { toast } = useToast();
   
-  // Product details state
   const [selectedColor, setSelectedColor] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
-  const [deliveryInfo, setDeliveryInfo] = useState({
-    name: '',
-    phone: '',
-    address: '',
-    city: '',
-    zipCode: ''
-  });
   
   // Review state
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(0);
-  const [showDeliveryForm, setShowDeliveryForm] = useState(false);
 
   // Mock product data (in real app, fetch based on productId)
   const product = {
@@ -117,35 +108,20 @@ const ProductDetails = () => {
       });
       return;
     }
-    setShowDeliveryForm(true);
     
-    // Scroll to delivery form
-    setTimeout(() => {
-      const deliveryForm = document.querySelector('[data-delivery-form]');
-      if (deliveryForm) {
-        deliveryForm.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
-  };
-
-  const handleSubmitOrder = () => {
-    if (!deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.address) {
-      toast({
-        title: "Information Required",
-        description: "Please fill in all delivery information.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // Here you would typically send order to backend and notify shop owner
-    toast({
-      title: "Order Placed!",
-      description: "Your order has been placed successfully. The shop owner will contact you soon."
+    // Navigate to checkout page with product details
+    const params = new URLSearchParams({
+      productId: product.id,
+      productName: product.name,
+      productPrice: product.price.toString(),
+      color: selectedColor,
+      size: selectedSize,
+      quantity: quantity.toString()
     });
     
-    navigate('/shop');
+    navigate(`/checkout?${params.toString()}`);
   };
+
 
   const handleSubmitReview = () => {
     if (!reviewText || reviewRating === 0) {
@@ -334,77 +310,6 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        {/* Delivery Information Form */}
-        {showDeliveryForm && (
-          <Card className="mt-8" data-delivery-form>
-            <CardHeader>
-              <CardTitle>Delivery Information</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Full Name *</Label>
-                  <Input
-                    id="name"
-                    value={deliveryInfo.name}
-                    onChange={(e) => setDeliveryInfo({...deliveryInfo, name: e.target.value})}
-                    placeholder="Enter your full name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone Number *</Label>
-                  <Input
-                    id="phone"
-                    value={deliveryInfo.phone}
-                    onChange={(e) => setDeliveryInfo({...deliveryInfo, phone: e.target.value})}
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <Label htmlFor="address">Address *</Label>
-                  <Textarea
-                    id="address"
-                    value={deliveryInfo.address}
-                    onChange={(e) => setDeliveryInfo({...deliveryInfo, address: e.target.value})}
-                    placeholder="Enter your complete address"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    value={deliveryInfo.city}
-                    onChange={(e) => setDeliveryInfo({...deliveryInfo, city: e.target.value})}
-                    placeholder="Enter your city"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="zipCode">ZIP Code</Label>
-                  <Input
-                    id="zipCode"
-                    value={deliveryInfo.zipCode}
-                    onChange={(e) => setDeliveryInfo({...deliveryInfo, zipCode: e.target.value})}
-                    placeholder="Enter ZIP code"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-4 mt-6">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowDeliveryForm(false)}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  onClick={handleSubmitOrder}
-                  className="bg-gradient-primary"
-                >
-                  Place Order (${(product.price * quantity).toFixed(2)})
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Reviews Section */}
         <div className="mt-12">
