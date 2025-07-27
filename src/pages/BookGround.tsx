@@ -13,8 +13,8 @@ import basketballCourtImage from '@/assets/basketball-court.jpg';
 
 const BookGround = () => {
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
-  const [selectedTime, setSelectedTime] = useState('');
   const [selectedSport, setSelectedSport] = useState('');
 
   const sports = ['Football', 'Basketball', 'Tennis', 'Volleyball', 'Badminton'];
@@ -73,6 +73,7 @@ const BookGround = () => {
   ];
 
   const filteredGrounds = grounds.filter(ground => {
+    if (searchQuery && !ground.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (selectedSport && selectedSport !== 'all-sports' && !ground.sports.includes(selectedSport)) return false;
     if (selectedLocation && selectedLocation !== 'all-locations' && ground.location !== selectedLocation) return false;
     return true;
@@ -100,7 +101,19 @@ const BookGround = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10">
         <Card className="shadow-strong bg-card/95 backdrop-blur-sm">
           <CardContent className="p-6">
-            <div className="grid md:grid-cols-3 gap-4 mb-4">
+            <div className="grid md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-card-foreground mb-2">
+                  Search Grounds
+                </label>
+                <Input
+                  type="text"
+                  placeholder="Search by ground name..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
                   Select Location
@@ -138,9 +151,17 @@ const BookGround = () => {
                 </Select>
               </div>
               <div className="flex items-end">
-                <Button className="w-full bg-gradient-primary">
+                <Button 
+                  className="w-full bg-gradient-primary"
+                  onClick={() => {
+                    // Clear all filters to show all results
+                    setSearchQuery('');
+                    setSelectedLocation('');
+                    setSelectedSport('');
+                  }}
+                >
                   <Search className="mr-2 h-4 w-4" />
-                  Search
+                  Clear Filters
                 </Button>
               </div>
             </div>
