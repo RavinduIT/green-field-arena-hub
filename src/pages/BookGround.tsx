@@ -5,6 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import bookingBackground from '@/assets/booking-background.jpg';
+import sportsComplexImage from '@/assets/sports-complex.jpg';
+import tennisCourtImage from '@/assets/tennis-court.jpg';
+import basketballCourtImage from '@/assets/basketball-court.jpg';
 
 const BookGround = () => {
   const [selectedDate, setSelectedDate] = useState('');
@@ -23,7 +27,7 @@ const BookGround = () => {
       location: 'Downtown Area',
       rating: 4.9,
       price: 25,
-      image: '🏟️',
+      image: sportsComplexImage,
       amenities: ['Parking', 'Changing Rooms', 'Equipment Rental', 'Cafeteria'],
       availability: ['08:00', '09:00', '14:00', '15:00', '16:00']
     },
@@ -35,7 +39,7 @@ const BookGround = () => {
       location: 'Sports District',
       rating: 4.8,
       price: 30,
-      image: '🎾',
+      image: tennisCourtImage,
       amenities: ['Parking', 'Pro Shop', 'Coaching', 'Ball Machine'],
       availability: ['09:00', '10:00', '11:00', '15:00', '16:00', '17:00']
     },
@@ -47,7 +51,7 @@ const BookGround = () => {
       location: 'North Side',
       rating: 4.7,
       price: 20,
-      image: '🏀',
+      image: basketballCourtImage,
       amenities: ['Parking', 'Changing Rooms', 'Sound System', 'Scoreboard'],
       availability: ['08:00', '10:00', '14:00', '18:00', '19:00']
     },
@@ -59,7 +63,7 @@ const BookGround = () => {
       location: 'Valley Area',
       rating: 4.6,
       price: 35,
-      image: '⚽',
+      image: sportsComplexImage,
       amenities: ['Parking', 'Floodlights', 'Changing Rooms', 'Goal Posts'],
       availability: ['08:00', '09:00', '15:00', '16:00', '17:00', '18:00']
     }
@@ -73,12 +77,16 @@ const BookGround = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header Section */}
-      <div className="bg-gradient-hero py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
+      <div 
+        className="relative h-64 bg-cover bg-center flex items-center justify-center"
+        style={{ backgroundImage: `url(${bookingBackground})` }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="relative text-center text-white">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Book Sports Grounds
           </h1>
-          <p className="text-xl text-primary-foreground/90 max-w-2xl mx-auto">
+          <p className="text-xl opacity-90 max-w-2xl mx-auto">
             Find and reserve the perfect sports facility for your game
           </p>
         </div>
@@ -164,7 +172,11 @@ const BookGround = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="text-4xl">{ground.image}</div>
+                    <img 
+                      src={ground.image} 
+                      alt={ground.name}
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
                     <div>
                       <CardTitle className="text-xl text-card-foreground mb-1">
                         {ground.name}

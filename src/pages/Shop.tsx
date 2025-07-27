@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import shopImage from '@/assets/sports-shop.jpg';
+import shopBackground from '@/assets/shop-background.jpg';
+import basketballEquipment from '@/assets/basketball-equipment.jpg';
+import tennisEquipment from '@/assets/tennis-equipment.jpg';
+import footballEquipment from '@/assets/football-equipment.jpg';
 
 const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -27,7 +30,7 @@ const Shop = () => {
       originalPrice: 59.99,
       rating: 4.8,
       reviews: 234,
-      image: '⚽',
+      image: footballEquipment,
       inStock: true,
       features: ['Official Size 5', 'FIFA Approved', 'Durable Construction'],
       description: 'Professional quality football for competitive matches'
@@ -41,7 +44,7 @@ const Shop = () => {
       originalPrice: 109.99,
       rating: 4.9,
       reviews: 156,
-      image: '🏀',
+      image: basketballEquipment,
       inStock: true,
       features: ['Official NBA Size', 'Composite Leather', 'Superior Grip'],
       description: 'Premium basketball used in professional leagues'
@@ -124,7 +127,7 @@ const Shop = () => {
       <div className="bg-gradient-hero py-16 relative overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{ backgroundImage: `url(${shopImage})` }}
+          style={{ backgroundImage: `url(${shopBackground})` }}
         />
         <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
@@ -246,7 +249,11 @@ const Shop = () => {
               
               <CardHeader className="pb-4">
                 <div className="text-center mb-4">
-                  <div className="text-6xl mb-2">{product.image}</div>
+                  <img 
+                    src={typeof product.image === 'string' && product.image.startsWith('http') ? product.image : basketballEquipment} 
+                    alt={product.name}
+                    className="w-20 h-20 object-cover rounded mx-auto mb-2"
+                  />
                   <CardTitle className="text-lg text-card-foreground mb-1">
                     {product.name}
                   </CardTitle>

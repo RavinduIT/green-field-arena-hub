@@ -6,7 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import coachImage from '@/assets/coach-training.jpg';
+import coachBackground from '@/assets/coach-background.jpg';
+import coachTrainingImage from '@/assets/coach-training.jpg';
+import coachCertification from '@/assets/coach-certification.jpg';
 
 const BookCoach = () => {
   const [selectedSport, setSelectedSport] = useState('');
@@ -27,7 +29,7 @@ const BookCoach = () => {
       reviews: 156,
       price: 45,
       location: 'Downtown',
-      avatar: '👨‍💼',
+      avatar: coachTrainingImage,
       specializations: ['Youth Training', 'Professional Coaching', 'Tactical Analysis'],
       certifications: ['UEFA B License', 'Sports Science Diploma'],
       availability: ['Mon', 'Wed', 'Fri', 'Sat'],
@@ -43,7 +45,7 @@ const BookCoach = () => {
       reviews: 203,
       price: 60,
       location: 'Sports District',
-      avatar: '👩‍💼',
+      avatar: coachTrainingImage,
       specializations: ['Tournament Preparation', 'Technique Development', 'Mental Training'],
       certifications: ['PTR Professional', 'Sports Psychology'],
       availability: ['Tue', 'Thu', 'Fri', 'Sun'],
@@ -59,7 +61,7 @@ const BookCoach = () => {
       reviews: 89,
       price: 40,
       location: 'North Side',
-      avatar: '👨‍🏫',
+      avatar: coachTrainingImage,
       specializations: ['Shooting Technique', 'Defense Training', 'Team Strategy'],
       certifications: ['NBA Coach Certification', 'Basketball Fundamentals'],
       availability: ['Mon', 'Tue', 'Thu', 'Sat'],
@@ -75,7 +77,7 @@ const BookCoach = () => {
       reviews: 134,
       price: 55,
       location: 'Valley Area',
-      avatar: '👩‍🏫',
+      avatar: coachTrainingImage,
       specializations: ['Stroke Technique', 'Competitive Swimming', 'Water Safety'],
       certifications: ['Swim England Level 3', 'Lifeguard Certified'],
       availability: ['Wed', 'Thu', 'Fri', 'Sun'],
@@ -96,7 +98,7 @@ const BookCoach = () => {
       <div className="bg-gradient-hero py-16 relative overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{ backgroundImage: `url(${coachImage})` }}
+          style={{ backgroundImage: `url(${coachBackground})` }}
         />
         <div className="container mx-auto px-4 text-center relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
@@ -196,8 +198,8 @@ const BookCoach = () => {
               <CardHeader className="pb-4">
                 <div className="flex items-start gap-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src="/placeholder-coach.jpg" alt={coach.name} />
-                    <AvatarFallback className="text-2xl">{coach.avatar}</AvatarFallback>
+                    <AvatarImage src={coach.avatar} alt={coach.name} />
+                    <AvatarFallback className="text-2xl">{coach.name.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-start justify-between">

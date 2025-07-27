@@ -15,6 +15,10 @@ import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
+import AdminShop from "./pages/AdminShop";
+import AdminGround from "./pages/AdminGround";
+import AdminCoach from "./pages/AdminCoach";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +41,10 @@ const App = () => (
               <Route path="/news" element={<News />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/shop" element={<AdminShop />} />
+              <Route path="/admin/ground" element={<AdminGround />} />
+              <Route path="/admin/coach" element={<AdminCoach />} />
+              <Route path="/payment" element={<Payment />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

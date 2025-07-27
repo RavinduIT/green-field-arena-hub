@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar, User, ShoppingCart, MapPin, Star, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import NewsCarousel from '@/components/NewsCarousel';
-import heroImage from '@/assets/hero-sports.jpg';
+import heroBackground from '@/assets/hero-background.jpg';
 import sportsComplexImage from '@/assets/sports-complex.jpg';
 import tennisCourtImage from '@/assets/tennis-court.jpg';
 import basketballCourtImage from '@/assets/basketball-court.jpg';
@@ -72,8 +72,8 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative h-[600px] bg-gradient-hero flex items-center justify-center overflow-hidden">
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{ backgroundImage: `url(${heroImage})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{ backgroundImage: `url(${heroBackground})` }}
         />
         <div className="relative container mx-auto px-4 text-center text-primary-foreground">
           <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
