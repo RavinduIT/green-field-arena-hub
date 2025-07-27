@@ -265,13 +265,12 @@ const BookCoach = () => {
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="font-medium text-card-foreground mb-2">Available Days:</h4>
-                  <div className="flex gap-2">
-                    {coach.availability.map((day) => (
-                      <Badge key={day} variant="outline" className="text-xs">
-                        {day}
-                      </Badge>
-                    ))}
+                  <h4 className="font-medium text-card-foreground mb-2">Location:</h4>
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    <Badge variant="outline" className="text-sm">
+                      {coach.location}
+                    </Badge>
                   </div>
                 </div>
 
