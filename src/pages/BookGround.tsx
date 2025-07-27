@@ -100,7 +100,7 @@ const BookGround = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10">
         <Card className="shadow-strong bg-card/95 backdrop-blur-sm">
           <CardContent className="p-6">
-            <div className="grid md:grid-cols-4 gap-4 mb-4">
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
               <div>
                 <label className="block text-sm font-medium text-card-foreground mb-2">
                   Select Location
@@ -114,23 +114,6 @@ const BookGround = () => {
                     {locations.map((location) => (
                       <SelectItem key={location} value={location}>
                         {location}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-card-foreground mb-2">
-                  Select Time
-                </label>
-                <Select value={selectedTime} onValueChange={setSelectedTime}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Choose time" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {timeSlots.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
                       </SelectItem>
                     ))}
                   </SelectContent>
