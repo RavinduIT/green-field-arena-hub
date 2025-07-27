@@ -145,12 +145,17 @@ const Shop = () => {
       <div className="container mx-auto px-4 -mt-8 relative z-10">
         <Card className="shadow-strong bg-card/95 backdrop-blur-sm">
           <CardContent className="p-6">
-            <div className="grid md:grid-cols-5 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               <div>
-                <Input
-                  placeholder="Search products..."
-                  className="w-full"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="Search products..."
+                    className="flex-1"
+                  />
+                  <Button className="bg-gradient-primary">
+                    <Search className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
               <div>
                 <Select value={selectedCategory} onValueChange={setSelectedCategory}>
@@ -196,12 +201,6 @@ const Shop = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div>
-                <Button className="w-full bg-gradient-primary">
-                  <Search className="mr-2 h-4 w-4" />
-                  Search
-                </Button>
               </div>
             </div>
           </CardContent>
