@@ -275,23 +275,13 @@ const BookCoach = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1"
-                    onClick={() => navigate(`/coach-profile?id=${coach.id}`)}
-                  >
-                    <User className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button 
-                    className="flex-1 bg-gradient-primary"
-                    onClick={() => navigate(`/coach-profile?id=${coach.id}`)}
-                  >
-                    <Clock className="mr-2 h-4 w-4" />
-                    Book Session
-                  </Button>
-                </div>
+                <Button 
+                  className="w-full bg-gradient-primary"
+                  onClick={() => navigate(`/coach-profile?id=${coach.id}`)}
+                >
+                  <Clock className="mr-2 h-4 w-4" />
+                  Book Coach
+                </Button>
               </CardContent>
             </Card>
           ))}
