@@ -16,11 +16,12 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedBrand, setSelectedBrand] = useState('');
   const [priceRange, setPriceRange] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [cartItems, setCartItems] = useState<number[]>([]);
 
   const categories = ['Football', 'Basketball', 'Tennis', 'Running', 'Swimming', 'Fitness'];
   const brands = ['Nike', 'Adidas', 'Wilson', 'Spalding', 'Under Armour', 'Puma'];
-  const priceRanges = ['Under $25', '$25-50', '$50-100', '$100-200', 'Over $200'];
+  const priceRanges = ['$0-25', '$25-50', '$50-100', '$100+'];
 
   const products = [
     {
@@ -110,8 +111,36 @@ const Shop = () => {
   ];
 
   const filteredProducts = products.filter(product => {
+    // Search filter
+    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+        !product.brand.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        !product.category.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    
+    // Category filter  
     if (selectedCategory && selectedCategory !== 'all-categories' && product.category !== selectedCategory) return false;
+    
+    // Brand filter
     if (selectedBrand && selectedBrand !== 'all-brands' && product.brand !== selectedBrand) return false;
+    
+    // Price range filter
+    if (priceRange && priceRange !== 'any-price') {
+      const price = product.price;
+      switch (priceRange) {
+        case '$0-25':
+          if (price > 25) return false;
+          break;
+        case '$25-50':
+          if (price < 25 || price > 50) return false;
+          break;
+        case '$50-100':
+          if (price < 50 || price > 100) return false;
+          break;
+        case '$100+':
+          if (price < 100) return false;
+          break;
+      }
+    }
+    
     return true;
   });
 
@@ -150,6 +179,8 @@ const Shop = () => {
                 <div className="flex gap-2">
                   <Input
                     placeholder="Search products..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="flex-1"
                   />
                   <Button className="bg-gradient-primary">
