@@ -286,7 +286,7 @@ const BookCoach = () => {
                   </Button>
                   <Button 
                     className="flex-1 bg-gradient-primary"
-                    onClick={() => navigate(`/payment?type=coach&id=${coach.id}&price=${coach.price}`)}
+                    onClick={() => navigate(`/coach-profile?id=${coach.id}`)}
                   >
                     <Clock className="mr-2 h-4 w-4" />
                     Book Session
