@@ -393,7 +393,7 @@ His expertise includes:
                         {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
+                    <PopoverContent className="w-auto p-0 z-50" align="start">
                       <Calendar
                         mode="single"
                         selected={selectedDate}
@@ -439,19 +439,7 @@ His expertise includes:
                   />
                 </div>
 
-                <div>
-                  <h4 className="font-semibold mb-3">Available Days</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {coach.availability.map((day) => (
-                      <Badge key={day} variant="outline" className="justify-center py-2">
-                        {day}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
                 <Separator />
-
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-sm">
                     <span>Session duration:</span>
