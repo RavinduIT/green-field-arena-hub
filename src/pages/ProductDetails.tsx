@@ -109,12 +109,7 @@ const ProductDetails = () => {
   };
 
   const handleBuyNow = () => {
-    console.log('Buy Now clicked!');
-    console.log('Selected color:', selectedColor);
-    console.log('Selected size:', selectedSize);
-    
     if (!selectedColor || !selectedSize) {
-      console.log('Missing selection, showing toast');
       toast({
         title: "Selection Required", 
         description: "Please select color and size before proceeding.",
@@ -122,8 +117,15 @@ const ProductDetails = () => {
       });
       return;
     }
-    console.log('Setting delivery form to true');
     setShowDeliveryForm(true);
+    
+    // Scroll to delivery form
+    setTimeout(() => {
+      const deliveryForm = document.querySelector('[data-delivery-form]');
+      if (deliveryForm) {
+        deliveryForm.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
   };
 
   const handleSubmitOrder = () => {
@@ -334,7 +336,7 @@ const ProductDetails = () => {
 
         {/* Delivery Information Form */}
         {showDeliveryForm && (
-          <Card className="mt-8">
+          <Card className="mt-8" data-delivery-form>
             <CardHeader>
               <CardTitle>Delivery Information</CardTitle>
             </CardHeader>
