@@ -109,7 +109,12 @@ const ProductDetails = () => {
   };
 
   const handleBuyNow = () => {
+    console.log('Buy Now clicked!');
+    console.log('Selected color:', selectedColor);
+    console.log('Selected size:', selectedSize);
+    
     if (!selectedColor || !selectedSize) {
+      console.log('Missing selection, showing toast');
       toast({
         title: "Selection Required", 
         description: "Please select color and size before proceeding.",
@@ -117,6 +122,7 @@ const ProductDetails = () => {
       });
       return;
     }
+    console.log('Setting delivery form to true');
     setShowDeliveryForm(true);
   };
 
