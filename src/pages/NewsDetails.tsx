@@ -175,7 +175,7 @@ const NewsDetails = () => {
                 <Card 
                   key={relatedNews.id}
                   className="cursor-pointer hover:shadow-medium transition-all duration-300"
-                  onClick={() => navigate(`/news?id=${relatedNews.id}`)}
+                  onClick={() => navigate(`/news-details?id=${relatedNews.id}`)}
                 >
                   <div className="relative h-48 overflow-hidden">
                     <img 

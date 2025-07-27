@@ -59,13 +59,13 @@ const NewsCarousel = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % newsItems.length);
-    }, 2500); // Change every 2.5 seconds for smooth continuous movement
+    }, 5000); // Change every 5 seconds for slower, more comfortable viewing
 
     return () => clearInterval(interval);
   }, [newsItems.length]);
 
   const handleNewsClick = (newsId: number) => {
-    navigate(`/news?id=${newsId}`);
+    navigate(`/news-details?id=${newsId}`);
   };
 
   return (
