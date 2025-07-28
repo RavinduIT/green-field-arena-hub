@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [newSport, setNewSport] = useState('');
+  const [showSportInput, setShowSportInput] = useState(false);
   const { user, updateUser, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -69,6 +71,28 @@ const Profile = () => {
 
   const handleInputChange = (field: string, value: string) => {
     updateUser({ [field]: value });
+  };
+
+  const handleAddSport = () => {
+    if (newSport.trim() && !user.sports.includes(newSport.trim())) {
+      const updatedSports = [...user.sports, newSport.trim()];
+      updateUser({ sports: updatedSports });
+      setNewSport('');
+      setShowSportInput(false);
+      toast({
+        title: "Sport added",
+        description: `${newSport.trim()} has been added to your favorite sports.`,
+      });
+    }
+  };
+
+  const handleRemoveSport = (sportToRemove: string) => {
+    const updatedSports = user.sports.filter(sport => sport !== sportToRemove);
+    updateUser({ sports: updatedSports });
+    toast({
+      title: "Sport removed",
+      description: `${sportToRemove} has been removed from your favorite sports.`,
+    });
   };
 
   return (
@@ -221,14 +245,59 @@ const Profile = () => {
                   <Label>Favorite Sports</Label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {user.sports.map((sport) => (
-                      <Badge key={sport} variant="secondary" className="bg-primary/10 text-primary">
+                      <Badge 
+                        key={sport} 
+                        variant="secondary" 
+                        className="bg-primary/10 text-primary cursor-pointer hover:bg-primary/20 transition-colors"
+                        onClick={() => isEditing && handleRemoveSport(sport)}
+                        title={isEditing ? "Click to remove" : undefined}
+                      >
                         {sport}
+                        {isEditing && (
+                          <span className="ml-1 text-xs opacity-70">×</span>
+                        )}
                       </Badge>
                     ))}
-                    {isEditing && (
-                      <Button variant="outline" size="sm">
+                    {isEditing && !showSportInput && (
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowSportInput(true)}
+                      >
                         + Add Sport
                       </Button>
+                    )}
+                    {isEditing && showSportInput && (
+                      <div className="flex gap-2 items-center">
+                        <Input
+                          value={newSport}
+                          onChange={(e) => setNewSport(e.target.value)}
+                          placeholder="Enter sport name"
+                          className="w-32"
+                          onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                              handleAddSport();
+                            }
+                          }}
+                        />
+                        <Button 
+                          size="sm" 
+                          onClick={handleAddSport}
+                          disabled={!newSport.trim()}
+                        >
+                          Add
+                        </Button>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setShowSportInput(false);
+                            setNewSport('');
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
