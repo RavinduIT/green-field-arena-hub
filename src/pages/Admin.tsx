@@ -1,17 +1,24 @@
 import { useState } from 'react';
-import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store, Download, Bell, Wrench, Lock } from 'lucide-react';
+import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store, Download, Bell, Wrench, Lock, FileText, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [notificationDialog, setNotificationDialog] = useState(false);
   
   const [users, setUsers] = useState([
     {
@@ -96,79 +103,160 @@ const Admin = () => {
   };
 
   const handleGeneralSettings = () => {
+    // Navigate to a settings page or open a modal
     toast({
       title: "General Settings",
-      description: "Opening general settings panel...",
+      description: "Redirecting to general settings configuration...",
     });
+    // In a real app: navigate('/admin/settings/general');
   };
 
   const handleSecuritySettings = () => {
     toast({
-      title: "Security Settings",
-      description: "Opening security configuration...",
+      title: "Security Settings", 
+      description: "Opening security configuration panel...",
     });
+    // In a real app: navigate('/admin/settings/security');
   };
 
   const handleUserPermissions = () => {
     toast({
       title: "User Permissions",
-      description: "Opening permissions management...",
+      description: "Opening user permissions management...",
     });
+    // In a real app: navigate('/admin/permissions');
   };
 
   const handleAnalyticsSettings = () => {
     toast({
       title: "Analytics Settings",
-      description: "Opening analytics configuration...",
+      description: "Opening analytics dashboard configuration...",
     });
+    // In a real app: navigate('/admin/analytics');
   };
 
-  const handleSendNotification = () => {
+  const handleSendNotification = async (title: string, message: string) => {
+    setIsLoading(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsLoading(false);
+    setNotificationDialog(false);
+    
     toast({
-      title: "System Notification Sent",
-      description: "Notification has been sent to all users successfully.",
+      title: "Notification Sent Successfully",
+      description: `"${title}" has been sent to ${users.length} users.`,
     });
   };
 
   const handleExportData = () => {
-    const userData = users.map(user => ({
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      joinDate: user.joinDate
-    }));
+    setIsLoading(true);
     
-    const dataStr = JSON.stringify(userData, null, 2);
+    // Create comprehensive export data
+    const exportData = {
+      exportDate: new Date().toISOString(),
+      summary: {
+        totalUsers: users.length,
+        activeUsers: users.filter(u => u.status === 'Active').length,
+        pendingUsers: users.filter(u => u.status === 'Pending').length,
+        totalRevenue: stats.totalRevenue,
+        activeBookings: stats.activeBookings
+      },
+      users: users.map(user => ({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        status: user.status,
+        joinDate: user.joinDate,
+        lastActive: user.lastActive
+      })),
+      recentActivity: recentActivity
+    };
+    
+    const dataStr = JSON.stringify(exportData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'user-data-export.json';
+    link.download = `admin-export-${new Date().toISOString().split('T')[0]}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    toast({
-      title: "Data Exported",
-      description: "User data has been exported successfully.",
-    });
+    setTimeout(() => {
+      setIsLoading(false);
+      toast({
+        title: "Export Complete",
+        description: `Complete admin data exported with ${users.length} users and ${recentActivity.length} activities.`,
+      });
+    }, 1500);
   };
 
-  const handleGenerateReports = () => {
+  const handleGenerateReports = async () => {
+    setIsLoading(true);
+    
+    // Simulate report generation
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    // Create a sample report
+    const reportData = {
+      reportDate: new Date().toISOString(),
+      period: "Last 30 Days",
+      metrics: {
+        userGrowth: "+15.3%",
+        revenue: `$${stats.totalRevenue.toLocaleString()}`,
+        activeBookings: stats.activeBookings,
+        conversionRate: "68.2%",
+        avgSessionDuration: "24m 18s"
+      },
+      topPerformers: {
+        bestCoach: "Sarah Thompson",
+        mostBookedGround: "City Sports Complex", 
+        topSellingItem: "Professional Basketball"
+      },
+      recommendations: [
+        "Increase marketing for tennis courts",
+        "Add more football coaching slots",
+        "Promote basketball equipment bundle"
+      ]
+    };
+    
+    const reportStr = JSON.stringify(reportData, null, 2);
+    const reportBlob = new Blob([reportStr], { type: 'application/json' });
+    const url = URL.createObjectURL(reportBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `admin-report-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    setIsLoading(false);
     toast({
-      title: "Generating Reports",
-      description: "Platform reports are being generated...",
+      title: "Reports Generated",
+      description: "Complete analytics report has been generated and downloaded.",
     });
   };
 
   const handleSystemMaintenance = () => {
-    toast({
-      title: "System Maintenance",
-      description: "Maintenance mode has been activated.",
-      variant: "destructive"
-    });
+    setMaintenanceMode(!maintenanceMode);
+    
+    if (!maintenanceMode) {
+      toast({
+        title: "Maintenance Mode Activated",
+        description: "System is now in maintenance mode. New registrations are disabled.",
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Maintenance Mode Deactivated", 
+        description: "System is back online. All features are now available.",
+      });
+    }
   };
 
   const getActivityIcon = (type: string) => {
@@ -427,37 +515,100 @@ const Admin = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button 
-                    className="w-full bg-gradient-primary"
-                    onClick={handleSendNotification}
-                  >
-                    <Bell className="mr-2 h-4 w-4" />
-                    Send System Notification
-                  </Button>
+                  <Dialog open={notificationDialog} onOpenChange={setNotificationDialog}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        className="w-full bg-gradient-primary"
+                        disabled={isLoading}
+                      >
+                        <Bell className="mr-2 h-4 w-4" />
+                        Send System Notification
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Send System Notification</DialogTitle>
+                        <DialogDescription>
+                          Send a notification to all {users.length} registered users
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div>
+                          <Label htmlFor="title">Notification Title</Label>
+                          <Input
+                            id="title"
+                            placeholder="Enter notification title"
+                            defaultValue="System Update"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="message">Message</Label>
+                          <Textarea
+                            id="message"
+                            placeholder="Enter your message here..."
+                            defaultValue="We have updated our system with new features and improvements."
+                            rows={4}
+                          />
+                        </div>
+                        <Button 
+                          onClick={() => {
+                            const title = (document.getElementById('title') as HTMLInputElement)?.value || "System Update";
+                            const message = (document.getElementById('message') as HTMLTextAreaElement)?.value || "System notification";
+                            handleSendNotification(title, message);
+                          }}
+                          className="w-full"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? "Sending..." : `Send to ${users.length} Users`}
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                  
                   <Button 
                     className="w-full" 
                     variant="outline"
                     onClick={handleExportData}
+                    disabled={isLoading}
                   >
                     <Download className="mr-2 h-4 w-4" />
-                    Export User Data
+                    {isLoading ? "Exporting..." : "Export Complete Data"}
                   </Button>
+                  
                   <Button 
                     className="w-full" 
                     variant="outline"
                     onClick={handleGenerateReports}
+                    disabled={isLoading}
                   >
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Generate Reports
+                    <FileText className="mr-2 h-4 w-4" />
+                    {isLoading ? "Generating..." : "Generate Analytics Report"}
                   </Button>
+                  
                   <Button 
-                    className="w-full" 
-                    variant="destructive"
+                    className={`w-full ${maintenanceMode ? 'bg-red-600 hover:bg-red-700' : ''}`}
+                    variant={maintenanceMode ? "default" : "destructive"}
                     onClick={handleSystemMaintenance}
                   >
-                    <Wrench className="mr-2 h-4 w-4" />
-                    System Maintenance
+                    {maintenanceMode ? (
+                      <>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Exit Maintenance Mode
+                      </>
+                    ) : (
+                      <>
+                        <AlertTriangle className="mr-2 h-4 w-4" />
+                        Enter Maintenance Mode
+                      </>
+                    )}
                   </Button>
+                  
+                  {maintenanceMode && (
+                    <div className="text-center p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-700 font-medium">⚠️ System is in Maintenance Mode</p>
+                      <p className="text-xs text-red-600">New registrations are disabled</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
