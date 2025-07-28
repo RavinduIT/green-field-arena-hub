@@ -1,14 +1,19 @@
 import { useState } from 'react';
-import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store } from 'lucide-react';
+import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store, Download, Bell, Wrench, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Admin = () => {
-  const [users] = useState([
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  const [users, setUsers] = useState([
     {
       id: 1,
       name: 'John Martinez',
@@ -67,13 +72,103 @@ const Admin = () => {
   ]);
 
   const updateUserRole = (userId: number, newRole: string) => {
-    // Here you would typically update the user role in the backend
-    console.log(`Updating user ${userId} role to ${newRole}`);
+    setUsers(prevUsers => 
+      prevUsers.map(user => 
+        user.id === userId ? { ...user, role: newRole } : user
+      )
+    );
+    toast({
+      title: "Role Updated",
+      description: `User role has been updated to ${newRole}`,
+    });
   };
 
   const updateUserStatus = (userId: number, newStatus: string) => {
-    // Here you would typically update the user status in the backend
-    console.log(`Updating user ${userId} status to ${newStatus}`);
+    setUsers(prevUsers => 
+      prevUsers.map(user => 
+        user.id === userId ? { ...user, status: newStatus } : user
+      )
+    );
+    toast({
+      title: "Status Updated",
+      description: `User status has been updated to ${newStatus}`,
+    });
+  };
+
+  const handleGeneralSettings = () => {
+    toast({
+      title: "General Settings",
+      description: "Opening general settings panel...",
+    });
+  };
+
+  const handleSecuritySettings = () => {
+    toast({
+      title: "Security Settings",
+      description: "Opening security configuration...",
+    });
+  };
+
+  const handleUserPermissions = () => {
+    toast({
+      title: "User Permissions",
+      description: "Opening permissions management...",
+    });
+  };
+
+  const handleAnalyticsSettings = () => {
+    toast({
+      title: "Analytics Settings",
+      description: "Opening analytics configuration...",
+    });
+  };
+
+  const handleSendNotification = () => {
+    toast({
+      title: "System Notification Sent",
+      description: "Notification has been sent to all users successfully.",
+    });
+  };
+
+  const handleExportData = () => {
+    const userData = users.map(user => ({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status,
+      joinDate: user.joinDate
+    }));
+    
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'user-data-export.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Data Exported",
+      description: "User data has been exported successfully.",
+    });
+  };
+
+  const handleGenerateReports = () => {
+    toast({
+      title: "Generating Reports",
+      description: "Platform reports are being generated...",
+    });
+  };
+
+  const handleSystemMaintenance = () => {
+    toast({
+      title: "System Maintenance",
+      description: "Maintenance mode has been activated.",
+      variant: "destructive"
+    });
   };
 
   const getActivityIcon = (type: string) => {
@@ -292,19 +387,35 @@ const Admin = () => {
                   <CardTitle>Platform Settings</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={handleGeneralSettings}
+                  >
                     <Settings className="mr-2 h-4 w-4" />
                     General Settings
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={handleSecuritySettings}
+                  >
                     <Shield className="mr-2 h-4 w-4" />
                     Security Settings
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={handleUserPermissions}
+                  >
                     <Users className="mr-2 h-4 w-4" />
                     User Permissions
                   </Button>
-                  <Button className="w-full justify-start" variant="outline">
+                  <Button 
+                    className="w-full justify-start" 
+                    variant="outline"
+                    onClick={handleAnalyticsSettings}
+                  >
                     <BarChart3 className="mr-2 h-4 w-4" />
                     Analytics Settings
                   </Button>
@@ -316,16 +427,35 @@ const Admin = () => {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button className="w-full bg-gradient-primary">
+                  <Button 
+                    className="w-full bg-gradient-primary"
+                    onClick={handleSendNotification}
+                  >
+                    <Bell className="mr-2 h-4 w-4" />
                     Send System Notification
                   </Button>
-                  <Button className="w-full" variant="outline">
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={handleExportData}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
                     Export User Data
                   </Button>
-                  <Button className="w-full" variant="outline">
+                  <Button 
+                    className="w-full" 
+                    variant="outline"
+                    onClick={handleGenerateReports}
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
                     Generate Reports
                   </Button>
-                  <Button className="w-full" variant="destructive">
+                  <Button 
+                    className="w-full" 
+                    variant="destructive"
+                    onClick={handleSystemMaintenance}
+                  >
+                    <Wrench className="mr-2 h-4 w-4" />
                     System Maintenance
                   </Button>
                 </CardContent>
