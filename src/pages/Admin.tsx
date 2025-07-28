@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -60,6 +61,36 @@ const Admin = () => {
       joinDate: '2023-08-05',
       avatar: '👩‍🏫',
       lastActive: '5 hours ago'
+    },
+    {
+      id: 5,
+      name: 'David Wilson',
+      email: 'david@email.com',
+      role: 'Coach',
+      status: 'Pending',
+      joinDate: '2024-01-20',
+      avatar: '👨‍🏫',
+      lastActive: '1 hour ago'
+    },
+    {
+      id: 6,
+      name: 'Emma Davis',
+      email: 'emma@email.com',
+      role: 'Shop Owner',
+      status: 'Active',
+      joinDate: '2023-11-15',
+      avatar: '👩‍💼',
+      lastActive: '4 hours ago'
+    },
+    {
+      id: 7,
+      name: 'Robert Brown',
+      email: 'robert@email.com',
+      role: 'Complex Owner',
+      status: 'Pending',
+      joinDate: '2024-01-25',
+      avatar: '👨‍💼',
+      lastActive: '2 days ago'
     }
   ]);
 
@@ -259,6 +290,26 @@ const Admin = () => {
     }
   };
 
+  const confirmUpdateUserRole = (userId: number, newRole: string, userName: string) => {
+    return new Promise<boolean>((resolve) => {
+      const confirmed = window.confirm(`Are you sure you want to change ${userName}'s role to ${newRole}?`);
+      if (confirmed) {
+        updateUserRole(userId, newRole);
+      }
+      resolve(confirmed);
+    });
+  };
+
+  const confirmUpdateUserStatus = (userId: number, newStatus: string, userName: string) => {
+    return new Promise<boolean>((resolve) => {
+      const confirmed = window.confirm(`Are you sure you want to change ${userName}'s status to ${newStatus}?`);
+      if (confirmed) {
+        updateUserStatus(userId, newStatus);
+      }
+      resolve(confirmed);
+    });
+  };
+
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'user': return <Users className="h-4 w-4" />;
@@ -269,6 +320,105 @@ const Admin = () => {
       default: return <Settings className="h-4 w-4" />;
     }
   };
+
+  const UserCard = ({ user, updateUserRole, updateUserStatus }: {
+    user: any;
+    updateUserRole: (userId: number, newRole: string) => void;
+    updateUserStatus: (userId: number, newStatus: string) => void;
+  }) => (
+    <div className="flex items-center justify-between p-4 border rounded-lg">
+      <div className="flex items-center gap-4">
+        <Avatar>
+          <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+          <AvatarFallback>{user.avatar}</AvatarFallback>
+        </Avatar>
+        <div>
+          <h3 className="font-medium text-card-foreground">{user.name}</h3>
+          <p className="text-sm text-muted-foreground">{user.email}</p>
+          <p className="text-xs text-muted-foreground">
+            Joined {user.joinDate} • Last active {user.lastActive}
+          </p>
+        </div>
+      </div>
+      
+      <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-2">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Select 
+                value={user.role}
+                onValueChange={(value) => {
+                  if (value !== user.role) {
+                    confirmUpdateUserRole(user.id, value, user.name);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Player">
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Player
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Coach">
+                    <div className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      Coach
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Shop Owner">
+                    <div className="flex items-center gap-2">
+                      <Store className="h-4 w-4" />
+                      Shop Owner
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Complex Owner">
+                    <div className="flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      Complex Owner
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </AlertDialogTrigger>
+          </AlertDialog>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Select 
+                value={user.status}
+                onValueChange={(value) => {
+                  if (value !== user.status) {
+                    confirmUpdateUserStatus(user.id, value, user.name);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="Suspended">Suspended</SelectItem>
+                  <SelectItem value="Inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </AlertDialogTrigger>
+          </AlertDialog>
+        </div>
+        
+        <Badge 
+          variant={user.status === 'Active' ? 'secondary' : 
+                  user.status === 'Pending' ? 'default' : 'destructive'}
+        >
+          {user.status}
+        </Badge>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -352,96 +502,107 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="users">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  User Management & Role Assignment
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {users.map((user) => (
-                    <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <Avatar>
-                          <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
-                          <AvatarFallback>{user.avatar}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <h3 className="font-medium text-card-foreground">{user.name}</h3>
-                          <p className="text-sm text-muted-foreground">{user.email}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Joined {user.joinDate} • Last active {user.lastActive}
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4">
-                        <div className="flex flex-col gap-2">
-                          <Select 
-                            defaultValue={user.role}
-                            onValueChange={(value) => updateUserRole(user.id, value)}
-                          >
-                            <SelectTrigger className="w-[140px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Player">
-                                <div className="flex items-center gap-2">
-                                  <Users className="h-4 w-4" />
-                                  Player
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="Coach">
-                                <div className="flex items-center gap-2">
-                                  <UserCheck className="h-4 w-4" />
-                                  Coach
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="Shop Owner">
-                                <div className="flex items-center gap-2">
-                                  <Store className="h-4 w-4" />
-                                  Shop Owner
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="Complex Owner">
-                                <div className="flex items-center gap-2">
-                                  <Building className="h-4 w-4" />
-                                  Complex Owner
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                          
-                          <Select 
-                            defaultValue={user.status}
-                            onValueChange={(value) => updateUserStatus(user.id, value)}
-                          >
-                            <SelectTrigger className="w-[140px]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Active">Active</SelectItem>
-                              <SelectItem value="Pending">Pending</SelectItem>
-                              <SelectItem value="Suspended">Suspended</SelectItem>
-                              <SelectItem value="Inactive">Inactive</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        <Badge 
-                          variant={user.status === 'Active' ? 'secondary' : 
-                                  user.status === 'Pending' ? 'default' : 'destructive'}
-                        >
-                          {user.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              {/* Pending Service Provider Registrations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-orange-600">
+                    <AlertTriangle className="h-5 w-5" />
+                    Pending Service Provider Registrations ({users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).map((user) => (
+                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
+                    ))}
+                    {users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No pending service provider registrations</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Active Coaches */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserCheck className="h-5 w-5" />
+                    Active Coaches ({users.filter(u => u.role === 'Coach' && u.status === 'Active').length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.filter(u => u.role === 'Coach' && u.status === 'Active').map((user) => (
+                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
+                    ))}
+                    {users.filter(u => u.role === 'Coach' && u.status === 'Active').length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No active coaches</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Active Shop Owners */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Store className="h-5 w-5" />
+                    Active Shop Owners ({users.filter(u => u.role === 'Shop Owner' && u.status === 'Active').length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.filter(u => u.role === 'Shop Owner' && u.status === 'Active').map((user) => (
+                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
+                    ))}
+                    {users.filter(u => u.role === 'Shop Owner' && u.status === 'Active').length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No active shop owners</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Active Ground Owners */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="h-5 w-5" />
+                    Active Ground Owners ({users.filter(u => u.role === 'Complex Owner' && u.status === 'Active').length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.filter(u => u.role === 'Complex Owner' && u.status === 'Active').map((user) => (
+                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
+                    ))}
+                    {users.filter(u => u.role === 'Complex Owner' && u.status === 'Active').length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No active ground owners</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Regular Users (Players) */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    Regular Users ({users.filter(u => u.role === 'Player').length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.filter(u => u.role === 'Player').map((user) => (
+                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
+                    ))}
+                    {users.filter(u => u.role === 'Player').length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No regular users</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="activity">
