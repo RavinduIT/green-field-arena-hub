@@ -69,7 +69,20 @@ const Cart = () => {
   const total = subtotal + shipping + tax;
 
   const handleCheckout = () => {
-    navigate('/payment?type=shop&total=' + total.toFixed(2));
+    // Use the first item in cart for checkout demo
+    const firstItem = cartItems[0];
+    if (firstItem) {
+      const params = new URLSearchParams({
+        type: 'shop',
+        productId: firstItem.id.toString(),
+        productName: firstItem.name,
+        productPrice: firstItem.price.toString(),
+        color: 'Default',
+        size: 'One Size',
+        quantity: firstItem.quantity.toString()
+      });
+      navigate(`/payment?${params.toString()}`);
+    }
   };
 
   if (cartItems.length === 0) {

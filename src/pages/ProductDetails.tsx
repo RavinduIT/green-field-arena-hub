@@ -109,8 +109,9 @@ const ProductDetails = () => {
       return;
     }
     
-    // Navigate to checkout page with product details
+    // Navigate to payment page with product details
     const params = new URLSearchParams({
+      type: 'shop',
       productId: product.id,
       productName: product.name,
       productPrice: product.price.toString(),
@@ -119,7 +120,7 @@ const ProductDetails = () => {
       quantity: quantity.toString()
     });
     
-    navigate(`/checkout?${params.toString()}`);
+    navigate(`/payment?${params.toString()}`);
   };
 
 

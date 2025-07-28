@@ -11,7 +11,7 @@ import BookCoach from "./pages/BookCoach";
 import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
 import News from "./pages/News";
-import Checkout from "./pages/Checkout";
+import UnifiedPayment from "./components/UnifiedPayment";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
@@ -21,7 +21,6 @@ import NotFound from "./pages/NotFound";
 import AdminShop from "./pages/AdminShop";
 import AdminGround from "./pages/AdminGround";
 import AdminCoach from "./pages/AdminCoach";
-import Payment from "./pages/Payment";
 import GroundDetails from "./pages/GroundDetails";
 import ServiceProviderRegister from "./pages/ServiceProviderRegister";
 import Cart from "./pages/Cart";
@@ -49,14 +48,13 @@ const App = () => (
               <Route path="/shop" element={<Shop />} />
               <Route path="/product-details" element={<ProductDetails />} />
               <Route path="/news" element={<News />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/payment" element={<UnifiedPayment />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/shop" element={<AdminShop />} />
               <Route path="/admin/ground" element={<AdminGround />} />
               <Route path="/admin/coach" element={<AdminCoach />} />
-              <Route path="/payment" element={<Payment />} />
               <Route path="/ground-details" element={<GroundDetails />} />
               <Route path="/service-provider-register" element={<ServiceProviderRegister />} />
               <Route path="/cart" element={<Cart />} />
