@@ -145,36 +145,19 @@ const Admin = () => {
   };
 
   const handleGeneralSettings = () => {
-    // Navigate to a settings page or open a modal
-    toast({
-      title: "General Settings",
-      description: "Redirecting to general settings configuration...",
-    });
-    // In a real app: navigate('/admin/settings/general');
+    navigate('/admin/general');
   };
 
   const handleSecuritySettings = () => {
-    toast({
-      title: "Security Settings", 
-      description: "Opening security configuration panel...",
-    });
-    // In a real app: navigate('/admin/settings/security');
+    navigate('/admin/security');
   };
 
   const handleUserPermissions = () => {
-    toast({
-      title: "User Permissions",
-      description: "Opening user permissions management...",
-    });
-    // In a real app: navigate('/admin/permissions');
+    navigate('/admin/permissions');
   };
 
   const handleAnalyticsSettings = () => {
-    toast({
-      title: "Analytics Settings",
-      description: "Opening analytics dashboard configuration...",
-    });
-    // In a real app: navigate('/admin/analytics');
+    navigate('/admin/analytics');
   };
 
   const handleSendNotification = async (title: string, message: string) => {

@@ -27,6 +27,10 @@ import Cart from "./pages/Cart";
 import NewsDetails from "./pages/NewsDetails";
 import CoachProfile from "./pages/CoachProfile";
 import MyBookings from "./pages/MyBookings";
+import AdminGeneral from "./pages/AdminGeneral";
+import AdminSecurity from "./pages/AdminSecurity";
+import AdminPermissions from "./pages/AdminPermissions";
+import AdminAnalytics from "./pages/AdminAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -61,6 +65,10 @@ const App = () => (
               <Route path="/news-details" element={<NewsDetails />} />
               <Route path="/coach-profile" element={<CoachProfile />} />
               <Route path="/my-bookings" element={<MyBookings />} />
+              <Route path="/admin/general" element={<AdminGeneral />} />
+              <Route path="/admin/security" element={<AdminSecurity />} />
+              <Route path="/admin/permissions" element={<AdminPermissions />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
