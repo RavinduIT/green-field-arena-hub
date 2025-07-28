@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,7 @@ interface BookingRequest {
 }
 
 const MyBookings = () => {
+  const navigate = useNavigate();
   const [bookings] = useState<BookingRequest[]>([
     {
       id: '1',
@@ -97,7 +99,19 @@ const MyBookings = () => {
     switch (booking.status) {
       case 'accepted':
         return (
-          <Button className="bg-gradient-primary">
+          <Button 
+            className="bg-gradient-primary"
+            onClick={() => {
+              const params = new URLSearchParams({
+                type: 'coach',
+                id: booking.id,
+                date: booking.date,
+                time: booking.time,
+                price: booking.price.toString()
+              });
+              navigate(`/payment?${params.toString()}`);
+            }}
+          >
             <DollarSign className="h-4 w-4 mr-2" />
             Pay Now
           </Button>
