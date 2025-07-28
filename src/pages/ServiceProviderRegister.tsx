@@ -45,6 +45,39 @@ const ServiceProviderRegister = () => {
   };
 
   const handleSubmit = () => {
+    // Create application object
+    const application = {
+      id: Date.now().toString(),
+      type: providerType,
+      personalInfo: {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        location: formData.location
+      },
+      businessInfo: {
+        businessName: formData.businessName,
+        description: formData.description,
+        experience: formData.experience,
+        specialties: formData.specialties
+      },
+      documents: {
+        photos: formData.photos.map(file => ({ name: file.name, size: file.size, type: file.type })),
+        certificates: formData.certificates.map(file => ({ name: file.name, size: file.size, type: file.type })),
+        idCard: formData.idCard ? { name: formData.idCard.name, size: formData.idCard.size, type: formData.idCard.type } : null,
+      },
+      status: 'pending',
+      submittedDate: new Date().toISOString(),
+      reviewedBy: null,
+      reviewDate: null,
+      reviewNotes: ''
+    };
+
+    // Store in localStorage (simulating backend storage)
+    const existingApplications = JSON.parse(localStorage.getItem('serviceProviderApplications') || '[]');
+    existingApplications.push(application);
+    localStorage.setItem('serviceProviderApplications', JSON.stringify(existingApplications));
+
     toast({
       title: "Application Submitted!",
       description: "Your application has been submitted for review. We'll contact you within 24-48 hours.",

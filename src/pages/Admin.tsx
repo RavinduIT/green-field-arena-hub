@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store, Download, Bell, Wrench, Lock, FileText, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Users, Settings, BarChart3, Shield, UserCheck, Building, Store, Download, Bell, Wrench, Lock, FileText, AlertTriangle, Eye, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -20,6 +20,8 @@ const Admin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [notificationDialog, setNotificationDialog] = useState(false);
+  const [applications, setApplications] = useState([]);
+  const [selectedApplication, setSelectedApplication] = useState(null);
   
   const [users, setUsers] = useState([
     {
@@ -108,6 +110,15 @@ const Admin = () => {
     { id: 4, action: 'Payment processed', user: 'Mike Johnson', time: '2 hours ago', type: 'payment' },
     { id: 5, action: 'New equipment listed', user: 'Sports Store Pro', time: '3 hours ago', type: 'shop' }
   ]);
+
+  // Load service provider applications
+  useEffect(() => {
+    const loadApplications = () => {
+      const storedApplications = JSON.parse(localStorage.getItem('serviceProviderApplications') || '[]');
+      setApplications(storedApplications);
+    };
+    loadApplications();
+  }, []);
 
   const updateUserRole = (userId: number, newRole: string) => {
     setUsers(prevUsers => 
@@ -288,6 +299,46 @@ const Admin = () => {
         description: "System is back online. All features are now available.",
       });
     }
+  };
+
+  const handleApplicationAction = (applicationId: string, action: 'approve' | 'reject', notes: string = '') => {
+    const updatedApplications = applications.map(app => 
+      app.id === applicationId 
+        ? { 
+            ...app, 
+            status: action === 'approve' ? 'approved' : 'rejected',
+            reviewedBy: 'Admin',
+            reviewDate: new Date().toISOString(),
+            reviewNotes: notes
+          }
+        : app
+    );
+    
+    setApplications(updatedApplications);
+    localStorage.setItem('serviceProviderApplications', JSON.stringify(updatedApplications));
+    
+    if (action === 'approve') {
+      const application = applications.find(app => app.id === applicationId);
+      // Convert provider type to role
+      const roleMap = {
+        'coach': 'Coach',
+        'ground': 'Complex Owner', 
+        'shop': 'Shop Owner'
+      };
+      
+      toast({
+        title: "Application Approved",
+        description: `${application.personalInfo.name} has been approved as a ${roleMap[application.type]}`,
+      });
+    } else {
+      toast({
+        title: "Application Rejected",
+        description: "The application has been rejected and the applicant will be notified.",
+        variant: "destructive"
+      });
+    }
+    
+    setSelectedApplication(null);
   };
 
   const getActivityIcon = (type: string) => {
@@ -540,8 +591,16 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="applications">
+              Service Applications
+              {applications.filter(app => app.status === 'pending').length > 0 && (
+                <Badge variant="destructive" className="ml-2">
+                  {applications.filter(app => app.status === 'pending').length}
+                </Badge>
+              )}
+            </TabsTrigger>
             <TabsTrigger value="activity">Recent Activity</TabsTrigger>
             <TabsTrigger value="settings">System Settings</TabsTrigger>
           </TabsList>
@@ -644,6 +703,213 @@ const Admin = () => {
                     {users.filter(u => u.role === 'Player').length === 0 && (
                       <p className="text-center text-muted-foreground py-8">No regular users</p>
                     )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="applications">
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Service Provider Applications
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {applications.length === 0 && (
+                      <p className="text-center text-muted-foreground py-8">No applications yet</p>
+                    )}
+                    
+                    {applications.map((application) => (
+                      <div key={application.id} className="border rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                              {application.type === 'coach' && <UserCheck className="h-5 w-5 text-primary" />}
+                              {application.type === 'ground' && <Building className="h-5 w-5 text-primary" />}
+                              {application.type === 'shop' && <Store className="h-5 w-5 text-primary" />}
+                            </div>
+                            <div>
+                              <h3 className="font-medium">{application.personalInfo.name}</h3>
+                              <p className="text-sm text-muted-foreground">{application.businessInfo.businessName}</p>
+                              <p className="text-xs text-muted-foreground">
+                                Applied: {new Date(application.submittedDate).toLocaleDateString()}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-3">
+                            <Badge 
+                              variant={
+                                application.status === 'pending' ? 'default' :
+                                application.status === 'approved' ? 'secondary' : 'destructive'
+                              }
+                            >
+                              {application.status === 'pending' && <Clock className="h-3 w-3 mr-1" />}
+                              {application.status === 'approved' && <CheckCircle className="h-3 w-3 mr-1" />}
+                              {application.status === 'rejected' && <XCircle className="h-3 w-3 mr-1" />}
+                              {application.status.charAt(0).toUpperCase() + application.status.slice(1)}
+                            </Badge>
+                            
+                            {application.status === 'pending' && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button size="sm" variant="outline">
+                                    <Eye className="h-4 w-4 mr-1" />
+                                    Review
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle>Service Provider Application Review</DialogTitle>
+                                    <DialogDescription>
+                                      Review the submitted application and documents
+                                    </DialogDescription>
+                                  </DialogHeader>
+                                  
+                                  <div className="space-y-6">
+                                    {/* Personal Information */}
+                                    <div>
+                                      <h4 className="font-medium mb-3">Personal Information</h4>
+                                      <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div><strong>Name:</strong> {application.personalInfo.name}</div>
+                                        <div><strong>Email:</strong> {application.personalInfo.email}</div>
+                                        <div><strong>Phone:</strong> {application.personalInfo.phone}</div>
+                                        <div><strong>Location:</strong> {application.personalInfo.location}</div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Business Information */}
+                                    <div>
+                                      <h4 className="font-medium mb-3">Business Information</h4>
+                                      <div className="space-y-2 text-sm">
+                                        <div><strong>Business Name:</strong> {application.businessInfo.businessName}</div>
+                                        <div><strong>Type:</strong> {application.type.charAt(0).toUpperCase() + application.type.slice(1)}</div>
+                                        <div><strong>Experience:</strong> {application.businessInfo.experience}</div>
+                                        {application.businessInfo.specialties.length > 0 && (
+                                          <div>
+                                            <strong>Specialties:</strong> {application.businessInfo.specialties.join(', ')}
+                                          </div>
+                                        )}
+                                        <div><strong>Description:</strong> {application.businessInfo.description}</div>
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Documents */}
+                                    <div>
+                                      <h4 className="font-medium mb-3">Submitted Documents</h4>
+                                      <div className="space-y-3">
+                                        {application.documents.photos.length > 0 && (
+                                          <div>
+                                            <strong>Photos ({application.documents.photos.length}):</strong>
+                                            <div className="mt-1 flex gap-2 flex-wrap">
+                                              {application.documents.photos.map((photo, idx) => (
+                                                <Badge key={idx} variant="outline">{photo.name}</Badge>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {application.documents.certificates.length > 0 && (
+                                          <div>
+                                            <strong>Certificates ({application.documents.certificates.length}):</strong>
+                                            <div className="mt-1 flex gap-2 flex-wrap">
+                                              {application.documents.certificates.map((cert, idx) => (
+                                                <Badge key={idx} variant="outline">{cert.name}</Badge>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
+                                        
+                                        {application.documents.idCard && (
+                                          <div>
+                                            <strong>ID Card:</strong>
+                                            <Badge variant="outline" className="ml-2">{application.documents.idCard.name}</Badge>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    
+                                    {/* Action Buttons */}
+                                    <div className="flex gap-4 pt-4 border-t">
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                                            <CheckCircle className="h-4 w-4 mr-1" />
+                                            Approve Application
+                                          </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>Approve Application</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              Are you sure you want to approve <strong>{application.personalInfo.name}</strong>'s application as a{' '}
+                                              <strong>{application.type === 'coach' ? 'Coach' : application.type === 'ground' ? 'Complex Owner' : 'Shop Owner'}</strong>?
+                                              <br />
+                                              This will grant them full service provider access.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction 
+                                              onClick={() => handleApplicationAction(application.id, 'approve')}
+                                              className="bg-green-600 hover:bg-green-700"
+                                            >
+                                              Yes, Approve
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                      
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <Button variant="destructive" className="flex-1">
+                                            <XCircle className="h-4 w-4 mr-1" />
+                                            Reject Application
+                                          </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>Reject Application</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              Are you sure you want to reject <strong>{application.personalInfo.name}</strong>'s application?
+                                              <br />
+                                              This action cannot be undone and they will be notified of the rejection.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                            <AlertDialogAction 
+                                              onClick={() => handleApplicationAction(application.id, 'reject')}
+                                              className="bg-red-600 hover:bg-red-700"
+                                            >
+                                              Yes, Reject
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    </div>
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            )}
+                          </div>
+                        </div>
+                        
+                        {/* Application Summary */}
+                        <div className="text-sm text-muted-foreground">
+                          <p><strong>Email:</strong> {application.personalInfo.email}</p>
+                          <p><strong>Documents:</strong> {application.documents.photos.length} photos, {application.documents.certificates.length} certificates{application.documents.idCard ? ', ID card' : ''}</p>
+                          {application.status !== 'pending' && application.reviewDate && (
+                            <p><strong>Reviewed:</strong> {new Date(application.reviewDate).toLocaleDateString()} by {application.reviewedBy}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
