@@ -290,26 +290,6 @@ const Admin = () => {
     }
   };
 
-  const confirmUpdateUserRole = (userId: number, newRole: string, userName: string) => {
-    return new Promise<boolean>((resolve) => {
-      const confirmed = window.confirm(`Are you sure you want to change ${userName}'s role to ${newRole}?`);
-      if (confirmed) {
-        updateUserRole(userId, newRole);
-      }
-      resolve(confirmed);
-    });
-  };
-
-  const confirmUpdateUserStatus = (userId: number, newStatus: string, userName: string) => {
-    return new Promise<boolean>((resolve) => {
-      const confirmed = window.confirm(`Are you sure you want to change ${userName}'s status to ${newStatus}?`);
-      if (confirmed) {
-        updateUserStatus(userId, newStatus);
-      }
-      resolve(confirmed);
-    });
-  };
-
   const getActivityIcon = (type: string) => {
     switch (type) {
       case 'user': return <Users className="h-4 w-4" />;
@@ -325,31 +305,35 @@ const Admin = () => {
     user: any;
     updateUserRole: (userId: number, newRole: string) => void;
     updateUserStatus: (userId: number, newStatus: string) => void;
-  }) => (
-    <div className="flex items-center justify-between p-4 border rounded-lg">
-      <div className="flex items-center gap-4">
-        <Avatar>
-          <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
-          <AvatarFallback>{user.avatar}</AvatarFallback>
-        </Avatar>
-        <div>
-          <h3 className="font-medium text-card-foreground">{user.name}</h3>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
-          <p className="text-xs text-muted-foreground">
-            Joined {user.joinDate} • Last active {user.lastActive}
-          </p>
+  }) => {
+    const [pendingRoleChange, setPendingRoleChange] = useState<string | null>(null);
+    const [pendingStatusChange, setPendingStatusChange] = useState<string | null>(null);
+
+    return (
+      <div className="flex items-center justify-between p-4 border rounded-lg">
+        <div className="flex items-center gap-4">
+          <Avatar>
+            <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+            <AvatarFallback>{user.avatar}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h3 className="font-medium text-card-foreground">{user.name}</h3>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <p className="text-xs text-muted-foreground">
+              Joined {user.joinDate} • Last active {user.lastActive}
+            </p>
+          </div>
         </div>
-      </div>
-      
-      <div className="flex items-center gap-4">
-        <div className="flex flex-col gap-2">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+        
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col gap-2">
+            {/* Role Change with Confirmation */}
+            <AlertDialog>
               <Select 
                 value={user.role}
                 onValueChange={(value) => {
                   if (value !== user.role) {
-                    confirmUpdateUserRole(user.id, value, user.name);
+                    setPendingRoleChange(value);
                   }
                 }}
               >
@@ -383,16 +367,42 @@ const Admin = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </AlertDialogTrigger>
-          </AlertDialog>
-          
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
+              
+              {pendingRoleChange && (
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Role Change</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to change <strong>{user.name}</strong>'s role from <strong>{user.role}</strong> to <strong>{pendingRoleChange}</strong>?
+                      <br />
+                      <span className="text-sm text-muted-foreground mt-2 block">This action will immediately update their permissions and access level.</span>
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setPendingRoleChange(null)}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={() => {
+                        updateUserRole(user.id, pendingRoleChange);
+                        setPendingRoleChange(null);
+                      }}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      Yes, Change Role
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              )}
+            </AlertDialog>
+            
+            {/* Status Change with Confirmation */}
+            <AlertDialog>
               <Select 
                 value={user.status}
                 onValueChange={(value) => {
                   if (value !== user.status) {
-                    confirmUpdateUserStatus(user.id, value, user.name);
+                    setPendingStatusChange(value);
                   }
                 }}
               >
@@ -406,19 +416,51 @@ const Admin = () => {
                   <SelectItem value="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
-            </AlertDialogTrigger>
-          </AlertDialog>
+              
+              {pendingStatusChange && (
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Status Change</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to change <strong>{user.name}</strong>'s status from <strong>{user.status}</strong> to <strong>{pendingStatusChange}</strong>?
+                      <br />
+                      {pendingStatusChange === 'Suspended' && (
+                        <span className="text-sm text-red-600 mt-2 block">⚠️ This will immediately restrict their access to the platform.</span>
+                      )}
+                      {pendingStatusChange === 'Active' && user.status === 'Pending' && (
+                        <span className="text-sm text-green-600 mt-2 block">✅ This will approve their registration and grant full access.</span>
+                      )}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel onClick={() => setPendingStatusChange(null)}>
+                      Cancel
+                    </AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={() => {
+                        updateUserStatus(user.id, pendingStatusChange);
+                        setPendingStatusChange(null);
+                      }}
+                      className={`${pendingStatusChange === 'Suspended' ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-primary/90'}`}
+                    >
+                      Yes, Change Status
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              )}
+            </AlertDialog>
+          </div>
+          
+          <Badge 
+            variant={user.status === 'Active' ? 'secondary' : 
+                    user.status === 'Pending' ? 'default' : 'destructive'}
+          >
+            {user.status}
+          </Badge>
         </div>
-        
-        <Badge 
-          variant={user.status === 'Active' ? 'secondary' : 
-                  user.status === 'Pending' ? 'default' : 'destructive'}
-        >
-          {user.status}
-        </Badge>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background">
