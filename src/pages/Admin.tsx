@@ -607,26 +607,6 @@ const Admin = () => {
 
           <TabsContent value="users">
             <div className="space-y-6">
-              {/* Pending Service Provider Registrations */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-orange-600">
-                    <AlertTriangle className="h-5 w-5" />
-                    Pending Service Provider Registrations ({users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).map((user) => (
-                      <UserCard key={user.id} user={user} updateUserRole={updateUserRole} updateUserStatus={updateUserStatus} />
-                    ))}
-                    {users.filter(u => u.status === 'Pending' && ['Coach', 'Shop Owner', 'Complex Owner'].includes(u.role)).length === 0 && (
-                      <p className="text-center text-muted-foreground py-8">No pending service provider registrations</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
               {/* Active Coaches */}
               <Card>
                 <CardHeader>
