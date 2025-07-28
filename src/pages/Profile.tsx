@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { User, Edit, Calendar, MapPin, Phone, Mail, Camera, Save } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { User, Edit, Calendar, MapPin, Phone, Mail, Camera, Save, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,8 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newSport, setNewSport] = useState('');
   const [showSportInput, setShowSportInput] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { user, updateUser, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -95,6 +97,47 @@ const Profile = () => {
     });
   };
 
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please select an image smaller than 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Check file type
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "Invalid file type",
+          description: "Please select an image file.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageUrl = e.target?.result as string;
+        setProfileImage(imageUrl);
+        updateUser({ avatar: imageUrl });
+        toast({
+          title: "Profile picture updated",
+          description: "Your profile picture has been successfully updated.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header Section */}
@@ -103,12 +146,27 @@ const Profile = () => {
           <div className="flex flex-col md:flex-row items-center gap-6">
             <div className="relative">
               <Avatar className="h-32 w-32 border-4 border-primary-foreground">
-                <AvatarImage src="/placeholder-user.jpg" alt={user.name} />
+                <AvatarImage 
+                  src={profileImage || `https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=400&h=400&fit=crop&crop=faces`} 
+                  alt={user.name} 
+                />
                 <AvatarFallback className="text-4xl">{user.avatar}</AvatarFallback>
               </Avatar>
-              <Button size="icon" className="absolute bottom-0 right-0 rounded-full bg-primary">
+              <Button 
+                size="icon" 
+                className="absolute bottom-0 right-0 rounded-full bg-primary hover:bg-primary/90 transition-colors"
+                onClick={triggerFileInput}
+                title="Upload profile picture"
+              >
                 <Camera className="h-4 w-4" />
               </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
             </div>
             <div className="text-center md:text-left text-primary-foreground">
               <h1 className="text-3xl md:text-4xl font-bold mb-2">{user.name}</h1>
